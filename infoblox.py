@@ -162,7 +162,9 @@ _USE_TTL_PROPERTY = "use_ttl"
 _NAME_PROPERTY = "name"
 _VIEW_PROPERTY = "view"
 _IPV4_ADDRESS_PROPERTY = "ipv4addr"
+_IPV4_ADDRESSES_PROPERTY = "ipv4addrs"
 _IPV6_ADDRESS_PROPERTY = "ipv6addr"
+_IPV6_ADDRESSES_PROPERTY = "ipv6addrs"
 _ID_PROPERTY = "_ref"
 _PTRDNAME_PROPERTY = "ptrdname"
 _EXT_ATTR_PROPERTY = "extattrs"
@@ -182,7 +184,8 @@ _DELEGATE_TO_PROPERTY = "delegate_to"
 
 try:
     import requests
-    requests.packages.urllib3.disable_warnings()
+    import urllib3
+    urllib3.disable_warnings()
     HAS_REQUESTS = True
 except ImportError:
     HAS_REQUESTS = False
@@ -207,6 +210,7 @@ class Infoblox(object):
             host=server, version=api_version)
         self.model_list = [_COMMENT_PROPERTY, _TTL_PROPERTY, _USE_TTL_PROPERTY, _NAME_PROPERTY,
                            _VIEW_PROPERTY, _IPV4_ADDRESS_PROPERTY, _IPV6_ADDRESS_PROPERTY,
+                           _IPV4_ADDRESSES_PROPERTY, _IPV6_ADDRESSES_PROPERTY,
                            _ID_PROPERTY, _PTRDNAME_PROPERTY, _EXT_ATTR_PROPERTY, _TXT_PROPERTY,
                            _PORT_PROPERTY, _PRIORITY_PROPERTY, _WEIGHT_PROPERTY, _TARGET_PROPERTY,
                            _MAC_PROPERTY, _CANONICAL_PROPERTY, _FQDN_PROPERTY, _FORWARD_TO_PROPERTY,
@@ -1058,7 +1062,7 @@ class Infoblox(object):
         else:
             raise Exception("Function options missing!")
 
-        model = {_NAME_PROPERTY: host, _IPV4_ADDRESS_PROPERTY: [{_IPV4_ADDRESS_PROPERTY: address}],
+        model = {_NAME_PROPERTY: host, _IPV4_ADDRESSES_PROPERTY: [{_IPV4_ADDRESS_PROPERTY: address}],
                  _VIEW_PROPERTY: self.dns_view,
                  _COMMENT_PROPERTY: comment, _EXT_ATTR_PROPERTY: extattrs}
         if(ttl is not None):
