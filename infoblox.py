@@ -1080,8 +1080,9 @@ class Infoblox(object):
             model.update({_USE_TTL_PROPERTY: True, _TTL_PROPERTY: int(ttl)})
             
         if(dnsreg is not None):
+            model.update({_REGISTER_IN_DNS_PROPERTY: dnsreg})
+        else:
             model.update({_REGISTER_IN_DNS_PROPERTY: False})
-            
         model = self._make_model(model)
         return self.invoke("post", "record:host", ok_codes=(200, 201, 400), json=model)
 
