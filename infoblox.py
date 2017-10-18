@@ -1016,6 +1016,9 @@ class Infoblox(object):
         """
         if not host:
             self.module.fail_json(msg="You must specify the option 'host'.")
+        # check to see if the name is a ref, to enable use of both FQDNs and _refs
+        if re.match("^record:host/"):
+            return self.get_host_by_ref(host)
         params = {"name": host, "_return_fields+": "comment,extattrs",
                   "view": self.dns_view}
         return self.invoke("get", "record:host", params=params)
