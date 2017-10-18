@@ -152,6 +152,7 @@ result:
   sample: [['...', '...'], ['...'], ['...']]
 '''
 
+import re
 from ansible.module_utils.basic import AnsibleModule
 from copy import copy
 
@@ -1017,7 +1018,7 @@ class Infoblox(object):
         if not host:
             self.module.fail_json(msg="You must specify the option 'host'.")
         # check to see if the name is a ref, to enable use of both FQDNs and _refs
-        if re.match("^record:host/"):
+        if re.match("^record:host/.*$", host):
             return self.get_host_by_ref(host)
         params = {"name": host, "_return_fields+": "comment,extattrs",
                   "view": self.dns_view}
@@ -1980,7 +1981,8 @@ def main():
     elif action == "delete_host":
         result = infoblox.get_host_by_name(host)
         if result:
-            result = infoblox.delete_object(result[0]["_ref"])
+            # there should be only ONE result, not a list
+            result = infoblox.delete_object(result["_ref"])
             module.exit_json(changed=True, result=result,
                              msg="Object {name} deleted".format(name=host))
         else:
