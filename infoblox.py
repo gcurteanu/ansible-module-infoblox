@@ -1014,11 +1014,21 @@ class Infoblox(object):
         Search host by FQDN in infoblox by using rest api
         """
         if not host:
-
             self.module.fail_json(msg="You must specify the option 'host'.")
         params = {"name": host, "_return_fields+": "comment,extattrs",
                   "view": self.dns_view}
         return self.invoke("get", "record:host", params=params)
+
+    # ---------------------------------------------------------------------------
+    # get_host_by_ref()
+    # ---------------------------------------------------------------------------
+    def get_host_by_ref(self, host_ref):
+        """
+        Search host by _ref in infoblox by using rest api
+        """
+        if not host_ref:
+            self.module.fail_json(msg="You must specify the option 'host_ref'.")
+        return self.invoke("get", host_ref)
 
     # ---------------------------------------------------------------------------
     # get_host_object()
@@ -1924,7 +1934,9 @@ def main():
         else:
             raise Exception("No network/range found for specified parameters")
         if result:
-            result = infoblox.get_host_by_name(host)
+            # The create host will return a _ref for what it created.
+            # No need to search by name since name is NOT guranteed unique
+            result = infoblox.get_host_by_ref(result)
             module.exit_json(changed=True, result=result)
         else:
             raise Exception()
