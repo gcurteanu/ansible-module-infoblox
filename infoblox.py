@@ -181,6 +181,7 @@ _NETWORK_PROPERTY = "network"
 _NETWORK_CONTAINER_PROPERTY = "network_container"
 _NETWORK_VIEW_PROPERTY = "network_view"
 _DELEGATE_TO_PROPERTY = "delegate_to"
+_REGISTER_IN_DNS_PROPERTY = "configure_for_dns"
 
 try:
     import requests
@@ -214,7 +215,7 @@ class Infoblox(object):
                            _ID_PROPERTY, _PTRDNAME_PROPERTY, _EXT_ATTR_PROPERTY, _TXT_PROPERTY,
                            _PORT_PROPERTY, _PRIORITY_PROPERTY, _WEIGHT_PROPERTY, _TARGET_PROPERTY,
                            _MAC_PROPERTY, _CANONICAL_PROPERTY, _FQDN_PROPERTY, _FORWARD_TO_PROPERTY,
-                           _NETWORK_PROPERTY, _NETWORK_VIEW_PROPERTY, _DELEGATE_TO_PROPERTY]
+                           _NETWORK_PROPERTY, _NETWORK_VIEW_PROPERTY, _DELEGATE_TO_PROPERTY, _REGISTER_IN_DNS_PROPERTY]
 
     def invoke(self, method, tail, ok_codes=(200,), **params):
         """
@@ -1048,7 +1049,7 @@ class Infoblox(object):
     # ---------------------------------------------------------------------------
     # create_host_record()
     # ---------------------------------------------------------------------------
-    def create_host_record(self, host, address, network_ref=None, comment=None, ttl=None, extattrs=None):
+    def create_host_record(self, host, address, network_ref=None, comment=None, ttl=None, extattrs=None, dnsreg=None):
         """
         Add host in infoblox by using rest api
         """
@@ -1077,6 +1078,9 @@ class Infoblox(object):
                  _COMMENT_PROPERTY: comment, _EXT_ATTR_PROPERTY: extattrs}
         if(ttl is not None):
             model.update({_USE_TTL_PROPERTY: True, _TTL_PROPERTY: int(ttl)})
+            
+        if(dnsreg is not None):
+            model.update({_REGISTER_IN_DNS_PROPERTY: False})
             
         model = self._make_model(model)
         return self.invoke("post", "record:host", ok_codes=(200, 201, 400), json=model)
