@@ -270,7 +270,8 @@ class Infoblox(object):
                 msg="Specify either 'network' or 'filter', but not both.")
         elif network:
             params = {_NETWORK_PROPERTY: network,
-                      _NETWORK_VIEW_PROPERTY: self.net_view}
+                      _NETWORK_VIEW_PROPERTY: self.net_view,
+                      _RETURN_FIELDS_PROPERTY + '+': _EXT_ATTR_PROPERTY+","+_COMMENT_PROPERTY}
             return self.invoke("get", "network", params=params)
         elif filters:
             list_of_filters = ['network?']
@@ -290,7 +291,8 @@ class Infoblox(object):
             list_of_filters.pop()
             out_filter = "".join(list_of_filters)
             params = {_NETWORK_PROPERTY: network,
-                      _NETWORK_VIEW_PROPERTY: self.net_view}
+                      _NETWORK_VIEW_PROPERTY: self.net_view,
+                      _RETURN_FIELDS_PROPERTY + '+': _EXT_ATTR_PROPERTY+","+_COMMENT_PROPERTY}
             return self.invoke("get", out_filter, params=params)
         else:
             self.module.fail_json(msg="Unknown get_network issue.")
